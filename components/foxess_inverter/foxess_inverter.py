@@ -3,6 +3,7 @@ import esphome.config_validation as cv
 from esphome.components import sensor, uart
 from esphome.const import CONF_ID
 
+AUTO_LOAD = ["foxess"]
 DEPENDENCIES = ["uart"]
 
 foxess_ns = cg.esphome_ns.namespace("foxess")
@@ -12,18 +13,16 @@ FoxessComponent = foxess_ns.class_(
 
 CONF_UART_ID = "uart_id"
 
-# Optional sensors
 SENSOR_TYPES = [
     "grid_power", "generation_power", "loads_power",
     "grid_voltage_r", "grid_current_r", "grid_frequency_r", "grid_power_r",
     "grid_voltage_s", "grid_current_s", "grid_frequency_s", "grid_power_s",
     "grid_voltage_t", "grid_current_t", "grid_frequency_t", "grid_power_t",
-    "pv1_voltage", "pv1_current", "pv1_power",
-    "pv2_voltage", "pv2_current", "pv2_power",
-    "pv3_voltage", "pv3_current", "pv3_power",
-    "pv4_voltage", "pv4_current", "pv4_power",
+    "pv1_voltage", "pv1_current", "pv2_voltage", "pv2_current",
+    "pv3_voltage", "pv3_current", "pv4_voltage", "pv4_current",
     "boost_temperature", "inverter_temperature", "ambient_temperature",
     "today_yield", "generation_total",
+    "pv1_power", "pv2_power", "pv3_power", "pv4_power",
     "inverter_state",
 ]
 
@@ -38,9 +37,13 @@ CONFIG_SCHEMA = cv.Schema(
 async def to_code(config):
     uart_component = await cg.get_variable(config[CONF_UART_ID])
     var = cg.new_Pvariable(config[CONF_ID], uart_component)
+
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
 
+    # --- assign all sensors ---
     for name in SENSOR_TYPES:
         if name in config:
             await sensor.new_sensor(config[name])
+            # Use assign() for pointer members
+            #cg.add(getattr(var, name).set_cpp_obj(sens))
