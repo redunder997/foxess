@@ -6,7 +6,7 @@ from esphome.const import CONF_ID
 AUTO_LOAD = ["foxess"]
 DEPENDENCIES = ["uart"]
 
-foxess_ns = cg.esphome_ns.namespace("foxess")
+foxess_ns = cg.esphome_ns.namespace("foxess_inverter")
 FoxessComponent = foxess_ns.class_(
     "FoxessComponent", cg.PollingComponent, uart.UARTDevice
 )
