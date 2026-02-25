@@ -3,10 +3,10 @@ import esphome.config_validation as cv
 from esphome.components import sensor, uart
 from esphome.const import CONF_ID
 
-AUTO_LOAD = ["foxess"]
+AUTO_LOAD = ["foxess_inverter"]
 DEPENDENCIES = ["uart"]
 
-foxess_ns = cg.esphome_ns.namespace("foxess_inverter")
+foxess_ns = cg.esphome_ns.namespace("foxess")
 FoxessComponent = foxess_ns.class_(
     "FoxessComponent", cg.PollingComponent, uart.UARTDevice
 )
